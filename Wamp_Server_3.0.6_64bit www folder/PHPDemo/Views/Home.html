@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+ 
+<html>
+    <head>
+        <title>Home Page</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link type="text/css" rel="stylesheet" href="HomeCss.css" />
+        <!--[if lt IE 9]>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>    
+        <div id="window_wrapper">
+            <header id="banner">
+                <div id="logo"></div> 
+                <div id="navigation"> 
+                    <ul id="menu">
+                        <li><a href="#">Services &#9829;</a>
+                             <ul>
+                                 <li><a href="#">New Joke</a></li>
+                                <li><a href="#">Joke In Pig Latin</a></li>
+                            </ul> 
+                        </li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                   </ul>
+                </div> 
+                <a href="#" id="menu-icon"></a>
+                <div id="navigationMobile">                     
+                    <ul id="menuMobile">
+                        <li><a id="services" href="#">Services &#9829;</a></li> 
+                        <li id="servicesJoke"><a href="#">New Joke</a></li>
+                        <li id="servicesPigLatin"><a href="#">Joke In Pig Latin</a></li> 
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                   </ul>
+                </div> 
+            </header> 
+            <section id="content_wrapper">
+                <div id="main">
+                    <div id="graphic">
+                        <p id="joketext"></p> 
+                    </div>
+                    <input id="newjoke" type="button" value="New Joke" />
+                    <br/>
+                    <br/>
+                    <input id="piglatin" type="button" value="Pig Latin" />
+                </div>
+            </section>
+            <footer id="footer">
+                <div class="footertext">
+                    &copy; Love
+                </div>  
+                <div id="logofooter"></div>
+            </footer>
+        </div>
+      <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        jQuery( function(){             
+            jQuery("#newjoke") 
+                .click(function(e){   
+                        e.preventDefault();  
+                        e.stopImmediatePropagation();  
+                        var jokeText = jQuery("#joketext").text();
+                        jQuery("#newjoke").attr('disabled', 'disabled');
+                        jQuery("#piglatin").attr('disabled', 'disabled');
+                             
+                        jQuery("#joketext")
+                                .stop(true)
+                                    .toggle("drop",
+                                            {direction: "right"},
+                                            1000,
+                                            function(){
+                                                jQuery
+                                                    .ajax({
+                                                           type:'GET',
+                                                           url: location.protocol + '//' + location.host + '/PhpDemo/Controllers/GetJoke.php',
+                                                           dataType:'text',  
+                                                           success: function(response){
+                                                                jQuery("#joketext")
+                                                                   .text(response);
+                                                                FadeInJokeText();
+                                                           },
+                                                           error: function(jqXHR,textStatus, errorThrown){
+                                                                jQuery("#joketext")
+                                                                       .text(jokeText);
+                                                                FadeInJokeText();
+                                                           }
+                                                    });                                                 
+                                            }
+                                    );                        
+                        
+                    }); 
+            function FadeInJokeText(){
+                jQuery("#joketext")
+                    .toggle("fade", 
+                            1000,
+                            function(){
+                                jQuery("#newjoke").attr('disabled', false);
+                                jQuery("#piglatin").attr('disabled', false);
+                            }
+                     ); 
+            }
+            jQuery("#piglatin")
+                .click(function(e){
+                    e.preventDefault();  
+                    e.stopImmediatePropagation();  
+                    var jokeText = jQuery("#joketext").text();
+                    jQuery("#piglatin").attr('disabled', 'disabled');
+                    jQuery("#newjoke").attr('disabled', 'disabled');
+
+                    jQuery("#joketext")
+                            .stop(true)
+                                .toggle("drop",
+                                        {direction: "left"},
+                                        1000,
+                                        function(){
+                                            jQuery
+                                                .ajax({
+                                                        type:'POST',
+                                                        url:location.protocol + '//' + location.host + '/PhpDemo/Controllers/GetPigLatin.php',
+                                                        dataType:'text',
+                                                        contentType:"application/json",
+                                                        data: JSON.stringify({msg:jokeText}),
+                                                        success: function(response){
+                                                                jQuery("#joketext")
+                                                                   .text(response);
+                                                                FadeInJokeText();
+                                                        },
+                                                        error: function(jqXHR,textStatus, errorThrown){
+                                                                jQuery("#joketext")
+                                                                        .text(jokeText);
+                                                                FadeInJokeText();
+                                                        }
+                                                });  
+                                        }
+                                );
+                        
+            });                      
+            jQuery("#services")
+                .click(function(e){
+                        e.preventDefault();  
+                        e.stopImmediatePropagation(); 
+                        jQuery("#services").attr('disabled', 'disabled');  
+                        jQuery("#servicesJoke , #servicesPigLatin")
+                                .toggle("slide",
+                                        {direction: "right"},
+                                        1000, 
+                                        function(){
+                                                jQuery("#services").attr('disabled', false);
+                                            }
+                                );
+                    });
+            jQuery("#menu-icon")
+                .click(function(e){
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        jQuery("#navigationMobile").toggle("slide", {direction: "right"}, 500);
+                    });
+        });
+    </script>
+    </body>
+</html>
